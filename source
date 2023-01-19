@@ -1,0 +1,128 @@
+--Settings
+local droppableItems = {192, 10, 9, 8} --BlueSteel, Steel, Iron, Copper
+local stacksToDrop = 9999 --Default value is 9999 which drops all your stacks basically.
+local selectedItemCode = 192 --defaults to the bluesteel code
+
+--Statuses
+local dropEnabled = false
+
+local function setItem(itemName)
+    if itemName == "Bluesteel" then
+        selectedItemCode = droppableItems[1]
+        print(itemName.." has determined the selection of itemCode: ".. selectedItemCode)
+    elseif itemName == "Steel" then
+        selectedItemCode = droppableItems[2]
+        print(itemName.." has determined the selection of itemCode: ".. selectedItemCode)
+    elseif itemName == "Iron" then
+     selectedItemCode = droppableItems[3]
+     print(itemName.." has determined the selection of itemCode: ".. selectedItemCode)
+    elseif itemName == "Copper" then
+     selectedItemCode = droppableItems[4]
+     print(itemName.." has determined the selection of itemCode: ".. selectedItemCode)
+    end
+end
+
+local function dropItem(amount, itemCode)
+    for i=1, amount do
+    if dropEnabled == false then
+        break
+    end
+	local args = {
+    [1] = "inventory",
+    [2] = itemCode,
+    [3] = 99
+}
+
+game:GetService("ReplicatedStorage").remoteInterface.inventory.drop:InvokeServer(unpack(args))
+wait(0.0001)
+end
+dropEnabled = false
+end
+
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Pablo's Dupe Utility",
+   LoadingTitle = "Created by SaintPablo#7379",
+   LoadingSubtitle = "Thank You for being part of our Community.",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "SP_SurvivalGameDropUtility"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "zsuHWTJeCD", -- The Discord invite code, do not include discord.gg/
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Saint Pablo Dupe Utility",
+      Subtitle = "Key System",
+      Note = "Join the discord (discord.gg/zsuHWTJeCD)",
+      FileName = "SiriusKey",
+      SaveKey = true,
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = "7tBSfYru"
+   }
+})
+
+local Tab = Window:CreateTab("Drop Resources", 4483362458) 
+local Section = Tab:CreateSection("Auto Drop")
+
+local Tab2 = Window:CreateTab("Extra", 4483362458) 
+local Section = Tab2:CreateSection("Utility")
+local Button = Tab2:CreateButton({
+   Name = "Destroy GUI",
+   Callback = function()
+    dropEnabled = false
+    Rayfield:Destroy()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+--Dropdown selection menu.
+local Dropdown = Tab:CreateDropdown({
+   Name = "Item to Drop",
+   Options = {"Bluesteel","Steel","Iron","Copper"},
+   CurrentOption = "Bluesteel",
+   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Option)
+    setItem(Option)
+   -- The function that takes place when the selected option is changed
+   -- The variable (Option) is a string for the value that the dropdown was changed to
+   end,
+})
+
+local Input = Tab:CreateInput({
+   Name = "Amount of Stacks To Drop",
+   PlaceholderText = "9999",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+    stacksToDrop = tonumber(Text)
+    print("Amount of Stacks To Drop: "..tostring(stacksToDrop))
+   -- The function that takes place when the input is changed
+   -- The variable (Text) is a string for the value in the text box
+   end,
+})
+
+local Section = Tab:CreateSection("Make sure to DOUBLE CHECK your settings before pressing the Drop Button!")
+
+local Button = Tab:CreateButton({
+   Name = "Drop Selected",
+   Callback = function()
+    dropEnabled = false
+    wait(0.002) --gives any other running dropfunctions a chance to break before running another one (prevents lag or crashes)
+    dropEnabled = true
+    dropItem(stacksToDrop, selectedItemCode)
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "FORCE STOP",
+   Callback = function()
+    dropEnabled = false
+   -- The function that takes place when the button is pressed
+   end,
+})
