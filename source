@@ -1,5 +1,8 @@
 --Settings
-local droppableItems = {192, 10, 9, 8} --BlueSteel, Steel, Iron, Copper
+local droppableOres = {192, 10, 9, 8} --BlueSteel, Steel, Iron, Copper
+local droppableMats = {12, 52, 96, 101, 111, 119} --Wood, Stone, ChiseledStone, Shingles, WoodPlanks, Bricks
+local droppableFood = {24, 95, 113, 107, 106, 190, 26, 20, 18, 14, 15, 21, 19, 13, 33} --Ribs, Carrot, Berry, Wheat, Mushroom, BerryPie, | Soup, Cooked Meat, raw meat, raw chicken, cooked chicken. DeliciousStew, MeatHunk, CarrotPie, Bread
+local droppableAmmo = {73, 156} -- Arrows, BallistaBolts
 local stacksToDrop = 9999 --Default value is 9999 which drops all your stacks basically.
 local selectedItemCode = 192 --defaults to the bluesteel code
 
@@ -7,18 +10,71 @@ local selectedItemCode = 192 --defaults to the bluesteel code
 local dropEnabled = false
 
 local function setItem(itemName)
+   --Ores
     if itemName == "Bluesteel" then
-        selectedItemCode = droppableItems[1]
+        selectedItemCode = droppableOres[1]
         print(itemName.." has determined the selection of itemCode: ".. selectedItemCode)
     elseif itemName == "Steel" then
-        selectedItemCode = droppableItems[2]
+        selectedItemCode = droppableOres[2]
         print(itemName.." has determined the selection of itemCode: ".. selectedItemCode)
     elseif itemName == "Iron" then
-     selectedItemCode = droppableItems[3]
+     selectedItemCode = droppableOres[3]
      print(itemName.." has determined the selection of itemCode: ".. selectedItemCode)
     elseif itemName == "Copper" then
-     selectedItemCode = droppableItems[4]
+     selectedItemCode = droppableOres[4]
      print(itemName.." has determined the selection of itemCode: ".. selectedItemCode)
+    end
+    --Materials
+    if itemName == "Wood" then
+      selectedItemCode = droppableMats[1]
+    elseif itemName == "Stone" then
+      selectedItemCode = droppableMats[2]
+    elseif itemName == "ChiseledStone" then
+      selectedItemCode = droppableMats[3]
+    elseif itemName == "Shingles" then
+      selectedItemCode = droppableMats[4]
+    elseif itemName == "WoodPlanks" then
+      selectedItemCode = droppableMats[5]
+    elseif itemName == "Bricks" then
+      selectedItemCode = droppableMats[6]
+    end
+    --Food
+   if itemName == "Ribs" then
+      selectedItemCode = droppableFood[1]
+    elseif itemName == "Carrot" then
+      selectedItemCode = droppableFood[2]
+    elseif itemName == "Berry" then
+      selectedItemCode = droppableFood[3]
+    elseif itemName == "Wheat" then
+      selectedItemCode = droppableFood[4]
+    elseif itemName == "Mushroom" then
+      selectedItemCode = droppableFood[5]
+    elseif itemName == "BerryPie" then
+      selectedItemCode = droppableFood[6]
+   elseif itemName == "Soup" then
+      selectedItemCode = droppableFood[7]
+    elseif itemName == "CookedMeat" then
+      selectedItemCode = droppableFood[8]
+    elseif itemName == "RawMeat" then
+      selectedItemCode = droppableFood[9]
+    elseif itemName == "RawChicken" then
+      selectedItemCode = droppableFood[10]
+    elseif itemName == "CookedChicken" then
+      selectedItemCode = droppableFood[11]
+    elseif itemName == "DeliciousStew" then
+      selectedItemCode = droppableFood[12]
+    elseif itemName == "MeatHunk" then
+      selectedItemCode = droppableFood[13]
+    elseif itemName == "CarrotPie" then
+      selectedItemCode = droppableFood[14]
+    elseif itemName == "Bread" then
+      selectedItemCode = droppableFood[15]
+    end
+    --Ammo
+    if itemName == "Arrows" then
+      selectedItemCode = droppableAmmo[1]
+    elseif itemName == "BallistaBolt" then
+      selectedItemCode = droppableAmmo[2]
     end
 end
 
@@ -34,7 +90,7 @@ local function dropItem(amount, itemCode)
 }
 
 game:GetService("ReplicatedStorage").remoteInterface.inventory.drop:InvokeServer(unpack(args))
-wait(0.0001)
+wait(0.00001)
 end
 dropEnabled = false
 end
@@ -80,10 +136,10 @@ local Button = Tab2:CreateButton({
    -- The function that takes place when the button is pressed
    end,
 })
-
+local Section = Tab:CreateSection("Choose Type of Item To Drop (Default: Bluesteel)")
 --Dropdown selection menu.
 local Dropdown = Tab:CreateDropdown({
-   Name = "Item to Drop",
+   Name = "Ores",
    Options = {"Bluesteel","Steel","Iron","Copper"},
    CurrentOption = "Bluesteel",
    Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -94,6 +150,41 @@ local Dropdown = Tab:CreateDropdown({
    end,
 })
 
+--Dropdown selection menu.
+local Dropdown = Tab:CreateDropdown({
+   Name = "Materials",
+   Options = {"Wood","Stone","ChiseledStone","Shingles","WoodPlanks","Bricks"}, --Wood, Stone, ChiseledStone, Shingles, WoodPlanks, Bricks
+   CurrentOption = "Select",
+   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Option)
+    setItem(Option)
+   end,
+})
+
+local Dropdown = Tab:CreateDropdown({
+   Name = "Food",
+   Options = {"Ribs","MeatHunk","CookedMeat","CarrotPie","BerryPie","DeliciousStew","Soup","Bread","Carrot","Berry","Wheat","Mushroom","CookedChicken","RawChicken","RawMeat"}, --Ribs, Carrot, Berry, Wheat, Mushroom, BerryPie, Soup, CookedMeat, RawMeat, RawChicken, CookedChicken.
+   CurrentOption = "Select",
+   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Option)
+    setItem(Option)
+   end,
+})
+
+--Dropdown selection menu.
+local Dropdown = Tab:CreateDropdown({
+   Name = "Ammo",
+   Options = {"Arrows","BallistaBolt"},
+   CurrentOption = "Select",
+   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Option)
+    setItem(Option)
+   -- The function that takes place when the selected option is changed
+   -- The variable (Option) is a string for the value that the dropdown was changed to
+   end,
+})
+
+local Section = Tab:CreateSection("Choose how many stacks to drop (Default is 9999)")
 local Input = Tab:CreateInput({
    Name = "Amount of Stacks To Drop",
    PlaceholderText = "9999",
@@ -112,7 +203,7 @@ local Button = Tab:CreateButton({
    Name = "Drop Selected",
    Callback = function()
     dropEnabled = false
-    wait(0.002) --gives any other running dropfunctions a chance to break before running another one (prevents lag or crashes)
+    wait(0.00002) --gives any other running dropfunctions a chance to break before running another one (prevents lag or crashes)
     dropEnabled = true
     dropItem(stacksToDrop, selectedItemCode)
    -- The function that takes place when the button is pressed
@@ -126,3 +217,4 @@ local Button = Tab:CreateButton({
    -- The function that takes place when the button is pressed
    end,
 })
+local Section = Tab:CreateSection("If you character keeps dropping when trying to pick something up, press force stop.")
